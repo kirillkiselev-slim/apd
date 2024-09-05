@@ -1,0 +1,7 @@
+__pycache__
+.idea
+venv
+app/.gitignore
+alembic
+app/posts.csv
+app/__pycache__
