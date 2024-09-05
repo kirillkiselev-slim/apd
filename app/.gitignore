@@ -5,3 +5,4 @@ app/.gitignore
 alembic
 app/posts.csv
 app/__pycache__
+elastic/__pycache__
