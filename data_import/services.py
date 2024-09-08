@@ -9,32 +9,35 @@ from datetime import datetime
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 from app.models import Document
+from app.schemas import Document as DocumentSchema
 from app.database import engine
 
 
-# Read the CSV file into a DataFrame
-posts = os.path.abspath('app/posts.csv')
+posts = os.path.abspath('data_import/posts.csv')
 
 df = pd.read_csv(posts)
 
-# Create an async sessionmaker instance
 AsyncSessionLocal = sessionmaker(
     bind=engine, class_=AsyncSession, expire_on_commit=False
 )
 
+
 async def load_data():
-    async with AsyncSessionLocal() as session:
+    """Загружает данные из CSV в БД с асинхронной сессией SQLAlchemy."""
+    async with AsyncSessionLocal() as async_session:
         try:
             for _, row in df.iterrows():
                 document = Document(
                     text=row['text'],
                     rubrics=row['rubrics'],
-                    created_date=datetime.strptime(row['created_date'], '%Y-%m-%d %H:%M:%S')
+                    created_date=datetime.strptime(row['created_date'],
+                                                   '%Y-%m-%d %H:%M:%S')
                 )
-                session.add(document)
+                async_session.add(document)
 
-            await session.commit()
+            await async_session.commit()
         except Exception:
-            await session.rollback()
+            await async_session.rollback()
+
 
 asyncio.run(load_data())
