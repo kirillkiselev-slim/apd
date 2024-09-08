@@ -10,8 +10,4 @@ COPY . .
 
 VOLUME [ "app.db" ]
 
-# RUN chmod +x entrypoint.sh
-
-# ENTRYPOINT ["./entrypoint.sh"]
-
 CMD ["fastapi", "run", "app/main.py", "--port", "80"]
